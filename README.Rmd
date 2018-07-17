@@ -1,0 +1,24 @@
+---
+title: "ggvis"
+output: html_notebook
+---
+
+## ggvis
+
+```{r echo=F}
+library(ggvis)
+library(ggplot2)
+```
+
+This package is an extension of ggplot2 to enables faster design exploration for data visualisation.
+ 
+For now it contains only the custom geom_dash that allows to plot dashes instead of points.
+Those can be rotated (aes_angle in radiant) or widden (aes_width) to encode additional information in comparison of geom_points.
+
+It also allows distribution visualisation like geom_rug.
+
+```{r echo=T}
+iris %>% ggplot(aes(Species , Petal.Length)) + geom_dash(width = 0.8)
+```
+
+
