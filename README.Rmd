@@ -1,10 +1,9 @@
 ---
 title: "ggvis"
-output:
-  html_document: default
-  html_notebook: default
+author: "Clément Viguier"
+date: "17 juillet 2018"
+output: html_document
 ---
-
 ## ggvis
 
 ```{r echo=F}
