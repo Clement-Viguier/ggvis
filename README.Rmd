@@ -1,6 +1,8 @@
 ---
 title: "ggvis"
-output: html_notebook
+output:
+  html_document: default
+  html_notebook: default
 ---
 
 ## ggvis
@@ -8,17 +10,34 @@ output: html_notebook
 ```{r echo=F}
 library(ggvis)
 library(ggplot2)
+library(tidyr)
 ```
 
-This package is an extension of ggplot2 to enables faster design exploration for data visualisation.
+This package is an extension of ggplot2 to enable faster design exploration for data visualisation.
  
-For now it contains only the custom geom_dash that allows to plot dashes instead of points.
+For now it contains the custom geom_dash that allows to plot dashes instead of points.
 Those can be rotated (aes_angle in radiant) or widden (aes_width) to encode additional information in comparison of geom_points.
 
 It also allows distribution visualisation like geom_rug.
 
 ```{r echo=T}
-iris %>% ggplot(aes(Species , Petal.Length)) + geom_dash(width = 0.8)
+iris %>% ggplot(aes(Species , Petal.Length)) +
+  geom_dash(width = 0.8) +
+  coord_fixed()
 ```
 
 
+The geom_arc function allows rapic arc visualisation
+
+```{r ech = T}
+
+iris %>% ggplot(aes(Sepal.Length , Petal.Length, colour = Species)) +
+  geom_arc(width = 0.8, aes(angle = Petal.Width ,radius = 0.1*Sepal.Width)) +
+  coord_fixed()
+```
+
+
+Because these geoms do not use symbols, but explicit representation of geometric objects, they work better with fixed coordinates.
+This can be ensured by addig  `+ coord_fixed()` to your ggplot call.
+
+Further work is need to ensure all objects fit the frame of the plot that is currently computed from the x,y of the aesthetic.

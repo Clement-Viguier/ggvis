@@ -8,6 +8,8 @@
 #'
 #' @import ggplot2 grid
 #' @importFrom ggplot2 ggproto
+#' @importFrom plyr empty
+#' @importFrom plyr mutate
 #' @eval rd_aesthetics("geom", "dash")
 #' @inheritParams layer
 #' @inheritParams geom_point
@@ -55,12 +57,13 @@ geom_dash <- function(mapping = NULL, data = NULL,
 #' @usage NULL
 #' @export
 GeomDash <- ggproto("GeomDash", Geom,
-                       required_aes = c("x", "y"),
-                       non_missing_aes = c("linetype", "size", "shape", "width", "angle", "start"),
-                       default_aes = aes( colour = "black", size = 0.5, linetype = 1, alpha = 1, width = 1, angle = 0, start = 0.5),
+                       required_aes = c("x"),
+                       non_missing_aes = c("y", "linetype", "size", "shape", "width", "angle", "start"),
+                       default_aes = aes(y = 0, colour = "black", size = 0.5, linetype = 1, alpha = 1, width = 1, angle = 0, start = 0.5),
 
                        draw_panel = function(data, panel_params, coord, arrow = NULL, arrow.fill = NULL,
                                              lineend = "butt", linejoin = "round", na.rm = FALSE) {
+
 
                          # print(data)
                          # print(1)
@@ -109,3 +112,4 @@ GeomDash <- ggproto("GeomDash", Geom,
 
                        draw_key = draw_key_path
 )
+
