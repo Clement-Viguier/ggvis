@@ -25,6 +25,24 @@ iris %>% ggplot(aes(Species , Petal.Length)) +
   coord_fixed()
 ```
 
+An example of the use of `geom_dash` to plot gradient is as follow:
+
+```{r}
+library(data.table)
+library(metR)  # devtools::install_github("eliocamp/metR")
+
+volcano <- as.data.table(melt(volcano, varnames = c("x", "y"),
+                              value.name = "h"))
+volcano[, c("dx", "dy") := metR::Derivate(h ~ x + y)]
+volcano[, "angle" := atan(dy/dx)]
+volcano[, "slope" := sqrt(dy^2 + dx^2)]
+
+volcano %>% as.data.frame() %>%  ggplot(aes(x, y)) +
+  geom_dash(aes(width = slope/max(slope, na.rm = T), angle = angle), relative = T) +
+  coord_fixed()+ theme_void()
+
+```
+
 
 The geom_arc function allows rapic arc visualisation
 
@@ -40,3 +58,4 @@ Because these geoms do not use symbols, but explicit representation of geometric
 This can be ensured by addig  `+ coord_fixed()` to your ggplot call.
 
 Further work is need to ensure all objects fit the frame of the plot that is currently computed from the x,y of the aesthetic.
+For now this problem is fixed by increasin the visible area with the function `coord_cartesian()`.

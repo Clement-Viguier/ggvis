@@ -13,6 +13,11 @@
 #' @eval rd_aesthetics("geom", "arc")
 #' @inheritParams layer
 #' @inheritParams geom_point
+#' @param mapping Set of aesthetic mappings created by aes() or aes_(). If specified and inherit.aes = TRUE (the default), it is combined with the default mapping at the top level of the plot. You must supply mapping if there is no plot mapping.
+#' The geom_arc is characterised by specific aes that encore different dimensions: `radius` is explicit, `width`: the length of the arc, `angle`: the position of the arc and `start` [0-1] the relative position of the starting point of the arc (0.5 by default).
+#' @param res angular resolution of the arc tracing, in radiant.
+#' @param reverse change the direction of the arc to be clockwise (TRUE by default because the calculation is based on the trigonometric positive direction that is anti-clockwise)
+#' @param relative if TRUE makes the `width` aes() angular instead of linear (FALSE by default).
 #' @param arrow specification for arrow heads, as created by arrow().
 #' @param arrow.fill fill colour to use for the arrow head (if closed). `NULL`
 #'        means use `colour` aesthetic.
@@ -31,7 +36,8 @@ geom_arc <- function(mapping = NULL, data = NULL,
                       lineend = "butt",
                       linejoin = "round",
                       res = pi/20,
-                      reverse = T,
+                     reverse = T,
+                     relative = F,
                       na.rm = FALSE,
                       show.legend = NA,
                       inherit.aes = TRUE) {
@@ -50,6 +56,7 @@ geom_arc <- function(mapping = NULL, data = NULL,
       linejoin = linejoin,
       res = res,
       reverse = reverse,
+      relative = relative,
       na.rm = na.rm,
       ...
     )
@@ -66,7 +73,7 @@ GeomArc <- ggproto("GeomArc", Geom,
                     default_aes = aes(radius = 1, y = 0, colour = "black", size = 0.5, linetype = 1, alpha = 1, width = 1, angle = 0, start = 0.5),
 
                     draw_panel = function(data, panel_params, coord, arrow = NULL, arrow.fill = NULL,
-                                          lineend = "butt", linejoin = "round", res = pi/20, reverse = T, na.rm = FALSE) {
+                                          lineend = "butt", linejoin = "round", res = pi/20, reverse = T, relative = F, na.rm = FALSE) {
 
                       data <- remove_missing(data, na.rm = na.rm,
                                              c("x", "y", "linetype", "size", "shape", "width", "angle", "start"),
@@ -78,11 +85,13 @@ GeomArc <- ggproto("GeomArc", Geom,
                       # starts <- subset(data, select = c(-xend, -yend))
                       # ends <- plyr::rename(subset(data, select = c(-x, -y)), c("xend" = "x", "yend" = "y"),
                       #                      warn_missing = FALSE)
-
-                      data <- data %>% mutate(width = width * ( -1 * reverse),
+                      print(reverse)
+                      print(relative)
+                      data <- data %>% mutate(width = width * ( - 1 * (1 - reverse) + 1 * (reverse)) * ( 1 * (1 - relative) + radius * (relative)),
                                               angle_start = width  * start / radius + angle,
                                               angle_end = angle - (width * (1 - start) / radius),
                                               nb_pts = 2 + floor(abs(angle_end - angle_start)/res))
+                      print(head(data))
 
                       pieces <- do.call(rbind, lapply(split(data, data$group), function(x) smooth_arc(x)))
                       pieces <- pieces %>% mutate(x = x + radius * cos(angles),

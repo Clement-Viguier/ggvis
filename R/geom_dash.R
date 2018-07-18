@@ -13,7 +13,10 @@
 #' @eval rd_aesthetics("geom", "dash")
 #' @inheritParams layer
 #' @inheritParams geom_point
+#' @param mapping Set of aesthetic mappings created by aes() or aes_(). If specified and inherit.aes = TRUE (the default), it is combined with the default mapping at the top level of the plot. You must supply mapping if there is no plot mapping.
+#' The `geom_dash` is characterised by specific aes() that encore different dimensions: `width`: the length of the dash, `angle`: the angle of the dash and `start` [0-1]the relative position of the starting point of the dash (0.5 by default).
 #' @param arrow specification for arrow heads, as created by arrow().
+#' @param relative if TRUE normalize the dash width relative to the maximum value of width to avoid overlapping (default = F).
 #' @param arrow.fill fill colour to use for the arrow head (if closed). `NULL`
 #'        means use `colour` aesthetic.
 #' @param lineend Line end style (round, butt, square).
@@ -30,6 +33,7 @@ geom_dash <- function(mapping = NULL, data = NULL,
                          arrow.fill = NULL,
                          lineend = "butt",
                          linejoin = "round",
+                      relative = F,
                          na.rm = FALSE,
                          show.legend = NA,
                          inherit.aes = TRUE) {
@@ -46,6 +50,7 @@ geom_dash <- function(mapping = NULL, data = NULL,
       arrow.fill = arrow.fill,
       lineend = lineend,
       linejoin = linejoin,
+      relative = relative,
       na.rm = na.rm,
       ...
     )
@@ -62,7 +67,7 @@ GeomDash <- ggproto("GeomDash", Geom,
                        default_aes = aes(y = 0, colour = "black", size = 0.5, linetype = 1, alpha = 1, width = 1, angle = 0, start = 0.5),
 
                        draw_panel = function(data, panel_params, coord, arrow = NULL, arrow.fill = NULL,
-                                             lineend = "butt", linejoin = "round", na.rm = FALSE) {
+                                             lineend = "butt", linejoin = "round", relative = F, na.rm = FALSE) {
 
 
                          # print(data)
@@ -73,28 +78,12 @@ GeomDash <- ggproto("GeomDash", Geom,
                          # print(data)
                          if (empty(data)) return(zeroGrob())
 
-                         # if (coord$is_linear()) {
-                         #   coord <- coord$transform(data, panel_params)
-                         #   arrow.fill <- arrow.fill %||% coord$colour
-                         #   return(segmentsGrob(coord$x, coord$y,
-                         #                       default.units = "native",
-                         #                       gp = gpar(
-                         #                         col = alpha(coord$colour, coord$alpha),
-                         #                         fill = alpha(arrow.fill, coord$alpha),
-                         #                         lwd = coord$size * .pt,
-                         #                         lty = coord$linetype,
-                         #                         lineend = lineend,
-                         #                         linejoin = linejoin
-                         #                       ),
-                         #                       arrow = arrow
-                         #   ))
-                         # }
-
                          data$group <- 1:nrow(data)
                          # starts <- subset(data, select = c(-xend, -yend))
                          # ends <- plyr::rename(subset(data, select = c(-x, -y)), c("xend" = "x", "yend" = "y"),
                          #                      warn_missing = FALSE)
 
+                         data <- data %>% mutate(width = width / (max(width, na.rm = T) * relative + (1 - relative) ) )
                          starts <- data %>% mutate(x = x + (- start) * width * cos(angle),
                                                    y = y + (- start)* width * sin(angle))
                          ends <- data %>% mutate(x = x + (1 - start) * width * cos(angle),

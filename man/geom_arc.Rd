@@ -7,9 +7,12 @@
 geom_arc(mapping = NULL, data = NULL, stat = "identity",
   position = "identity", ..., arrow = NULL, arrow.fill = NULL,
   lineend = "butt", linejoin = "round", res = pi/20, reverse = T,
-  na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
+  relative = F, na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
 }
 \arguments{
+\item{mapping}{Set of aesthetic mappings created by aes() or aes_(). If specified and inherit.aes = TRUE (the default), it is combined with the default mapping at the top level of the plot. You must supply mapping if there is no plot mapping.
+The geom_arc is characterised by specific aes that encore different dimensions: `radius` is explicit, `width`: the length of the arc, `angle`: the position of the arc and `start` [0-1] the relative position of the starting point of the arc (0.5 by default).}
+
 \item{arrow}{specification for arrow heads, as created by arrow().}
 
 \item{arrow.fill}{fill colour to use for the arrow head (if closed). `NULL`
@@ -18,6 +21,12 @@ means use `colour` aesthetic.}
 \item{lineend}{Line end style (round, butt, square).}
 
 \item{linejoin}{Line join style (round, mitre, bevel).}
+
+\item{res}{angular resolution of the arc tracing, in radiant.}
+
+\item{reverse}{change the direction of the arc to be clockwise (TRUE by default because the calculation is based on the trigonometric positive direction that is anti-clockwise)}
+
+\item{relative}{if TRUE makes the `width` aes() angular instead of linear (FALSE by default).}
 }
 \description{
 `geom_arc` draws an arc of center (x, y), with a custom radius, angle and width.
