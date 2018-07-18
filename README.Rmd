@@ -42,7 +42,7 @@ volcano %>% as.data.frame() %>%  ggplot(aes(x, y)) +
   coord_fixed()+ theme_void()
 
 ```
-
+![Volcano slope field](./images/volcano_dash.png)
 
 The geom_arc function allows rapic arc visualisation
 
