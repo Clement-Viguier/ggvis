@@ -6,7 +6,7 @@ output: html_document
 ---
 ## ggvis
 
-```{r echo=F}
+```{r libraries, echo=FALSE}
 library(ggvis)
 library(ggplot2)
 library(tidyr)

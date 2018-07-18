@@ -85,13 +85,13 @@ GeomArc <- ggproto("GeomArc", Geom,
                       # starts <- subset(data, select = c(-xend, -yend))
                       # ends <- plyr::rename(subset(data, select = c(-x, -y)), c("xend" = "x", "yend" = "y"),
                       #                      warn_missing = FALSE)
-                      print(reverse)
-                      print(relative)
+                      # print(reverse)
+                      # print(relative)
                       data <- data %>% mutate(width = width * ( - 1 * (1 - reverse) + 1 * (reverse)) * ( 1 * (1 - relative) + radius * (relative)),
                                               angle_start = width  * start / radius + angle,
                                               angle_end = angle - (width * (1 - start) / radius),
                                               nb_pts = 2 + floor(abs(angle_end - angle_start)/res))
-                      print(head(data))
+                      # print(head(data))
 
                       pieces <- do.call(rbind, lapply(split(data, data$group), function(x) smooth_arc(x)))
                       pieces <- pieces %>% mutate(x = x + radius * cos(angles),
