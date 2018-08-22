@@ -6,8 +6,8 @@
 \usage{
 geom_dash(mapping = NULL, data = NULL, stat = "identity",
   position = "identity", ..., arrow = NULL, arrow.fill = NULL,
-  lineend = "butt", linejoin = "round", relative = F, na.rm = FALSE,
-  show.legend = NA, inherit.aes = TRUE)
+  lineend = "butt", linejoin = "round", relative = F,
+  na.rm = FALSE, show.legend = NA, inherit.aes = TRUE)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by aes() or aes_(). If specified and inherit.aes = TRUE (the default), it is combined with the default mapping at the top level of the plot. You must supply mapping if there is no plot mapping.

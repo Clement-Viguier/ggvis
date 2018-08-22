@@ -9,7 +9,7 @@
 #' @import ggplot2 grid
 #' @importFrom ggplot2 ggproto
 #' @importFrom plyr empty
-#' @importFrom plyr mutate
+#' @importFrom dplyr group_by ungroup mutate
 #' @eval rd_aesthetics("geom", "arc")
 #' @inheritParams layer
 #' @inheritParams geom_point
@@ -38,6 +38,7 @@ geom_arc <- function(mapping = NULL, data = NULL,
                       res = pi/20,
                      reverse = T,
                      relative = F,
+                     normalise = F,
                       na.rm = FALSE,
                       show.legend = NA,
                       inherit.aes = TRUE) {
@@ -57,6 +58,7 @@ geom_arc <- function(mapping = NULL, data = NULL,
       res = res,
       reverse = reverse,
       relative = relative,
+      normalise = normalise,
       na.rm = na.rm,
       ...
     )
@@ -73,7 +75,7 @@ GeomArc <- ggproto("GeomArc", Geom,
                     default_aes = aes(radius = 1, y = 0, colour = "black", size = 0.5, linetype = 1, alpha = 1, width = 1, angle = 0, start = 0.5),
 
                     draw_panel = function(data, panel_params, coord, arrow = NULL, arrow.fill = NULL,
-                                          lineend = "butt", linejoin = "round", res = pi/20, reverse = T, relative = F, na.rm = FALSE) {
+                                          lineend = "butt", linejoin = "round", res = pi/20, reverse = T, relative = F, normalise = F, na.rm = FALSE) {
 
                       data <- remove_missing(data, na.rm = na.rm,
                                              c("x", "y", "linetype", "size", "shape", "width", "angle", "start"),
@@ -81,7 +83,17 @@ GeomArc <- ggproto("GeomArc", Geom,
                       # print(data)
                       if (empty(data)) return(zeroGrob())
 
+                      data$groupn <- data$group
                       data$group <- 1:nrow(data)
+
+                      # normalise if needed:
+                      if (normalise){
+                        data <- data %>% group_by(groupn) %>% mutate(width = width / max(width) * 2*pi) %>% ungroup()
+                        print((data$width)/(2*pi))
+                        relative <- 1
+                      }
+                      print(summary(data))
+
                       # starts <- subset(data, select = c(-xend, -yend))
                       # ends <- plyr::rename(subset(data, select = c(-x, -y)), c("xend" = "x", "yend" = "y"),
                       #                      warn_missing = FALSE)
@@ -91,7 +103,7 @@ GeomArc <- ggproto("GeomArc", Geom,
                                               angle_start = width  * start / radius + angle,
                                               angle_end = angle - (width * (1 - start) / radius),
                                               nb_pts = 2 + floor(abs(angle_end - angle_start)/res))
-                      # print(head(data))
+                      print(summary(data))
 
                       pieces <- do.call(rbind, lapply(split(data, data$group), function(x) smooth_arc(x)))
                       pieces <- pieces %>% mutate(x = x + radius * cos(angles),
@@ -112,9 +124,9 @@ GeomArc <- ggproto("GeomArc", Geom,
 
 
 smooth_arc <- function(df){
-  angles <- seq(df$angle_start[1], df$angle_end[1], length.out = df$nb_pts[1])
+  angles <- seq(min(df$angle_start[1], df$angle_end[1]), max(df$angle_start[1], df$angle_end[1]), length.out = df$nb_pts[1])
   # print(angles)
-  # print(df)
+ # print(df)
   return(cbind(df[rep(1, length(angles)),], angles))
 }
 

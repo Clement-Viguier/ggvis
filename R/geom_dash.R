@@ -9,7 +9,7 @@
 #' @import ggplot2 grid
 #' @importFrom ggplot2 ggproto
 #' @importFrom plyr empty
-#' @importFrom plyr mutate
+#' @importFrom dplyr mutate
 #' @eval rd_aesthetics("geom", "dash")
 #' @inheritParams layer
 #' @inheritParams geom_point
