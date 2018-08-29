@@ -28,6 +28,8 @@ means use `colour` aesthetic.}
 \item{reverse}{change the direction of the arc to be clockwise (TRUE by default because the calculation is based on the trigonometric positive direction that is anti-clockwise)}
 
 \item{relative}{if TRUE makes the `width` aes() angular instead of linear (FALSE by default).}
+
+\item{relative}{if TRUE normalize the circle  width relative to the maximum value of width to avoid overlapping (default = F).}
 }
 \description{
 `geom_arc` draws an arc of center (x, y), with a custom radius, angle and width.

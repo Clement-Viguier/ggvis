@@ -18,6 +18,7 @@
 #' @param res angular resolution of the arc tracing, in radiant.
 #' @param reverse change the direction of the arc to be clockwise (TRUE by default because the calculation is based on the trigonometric positive direction that is anti-clockwise)
 #' @param relative if TRUE makes the `width` aes() angular instead of linear (FALSE by default).
+#' @param relative if TRUE normalize the circle  width relative to the maximum value of width to avoid overlapping (default = F).
 #' @param arrow specification for arrow heads, as created by arrow().
 #' @param arrow.fill fill colour to use for the arrow head (if closed). `NULL`
 #'        means use `colour` aesthetic.
@@ -89,30 +90,19 @@ GeomArc <- ggproto("GeomArc", Geom,
                       # normalise if needed:
                       if (normalise){
                         data <- data %>% group_by(groupn) %>% mutate(width = width / max(width) * 2*pi) %>% ungroup()
-                        print((data$width)/(2*pi))
+                        # if so, the length must be relative
                         relative <- 1
                       }
-                      print(summary(data))
 
-                      # starts <- subset(data, select = c(-xend, -yend))
-                      # ends <- plyr::rename(subset(data, select = c(-x, -y)), c("xend" = "x", "yend" = "y"),
-                      #                      warn_missing = FALSE)
-                      # print(reverse)
-                      # print(relative)
                       data <- data %>% mutate(width = width * ( - 1 * (1 - reverse) + 1 * (reverse)) * ( 1 * (1 - relative) + radius * (relative)),
                                               angle_start = width  * start / radius + angle,
                                               angle_end = angle - (width * (1 - start) / radius),
                                               nb_pts = 2 + floor(abs(angle_end - angle_start)/res))
-                      print(summary(data))
 
                       pieces <- do.call(rbind, lapply(split(data, data$group), function(x) smooth_arc(x)))
                       pieces <- pieces %>% mutate(x = x + radius * cos(angles),
                                                   y = y + radius * sin(angles))
 
-                      # print(pieces)
-
-
-                      # pieces <- pieces[order(pieces$group),]
 
                       GeomPath$draw_panel(pieces, panel_params, coord, arrow = arrow,
                                           lineend = lineend)
@@ -125,8 +115,6 @@ GeomArc <- ggproto("GeomArc", Geom,
 
 smooth_arc <- function(df){
   angles <- seq(min(df$angle_start[1], df$angle_end[1]), max(df$angle_start[1], df$angle_end[1]), length.out = df$nb_pts[1])
-  # print(angles)
- # print(df)
   return(cbind(df[rep(1, length(angles)),], angles))
 }
 

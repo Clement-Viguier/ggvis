@@ -4,10 +4,10 @@ author: "Clément Viguier"
 date: "17 juillet 2018"
 output: html_document
 ---
-## ggvis
+## ggvistools
 
 ```{r libraries, echo=FALSE}
-library(ggvis)
+library(ggvistools)
 library(ggplot2)
 library(tidyr)
 ```
