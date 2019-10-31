@@ -1,12 +1,12 @@
 ggvistools
 ----------
 
-This package is an extension of ggplot2 to enable faster design
+This package is an extension to ggplot2 to enable faster design
 exploration for data visualisation.
 
-For now it contains the custom geom\_dash that allows to plot dashes
+For now, it contains the custom geom\_dash that allows plotting dashes
 instead of points. Those can be rotated (aes\_angle in radiant) or
-widden (aes\_width) to encode additional information in comparison of
+widden (aes\_width) to encode additional informations in comparison of
 geom\_points.
 
 It also allows distribution visualisation like geom\_rug.
@@ -17,7 +17,8 @@ It also allows distribution visualisation like geom\_rug.
 
 ![](README_files/figure-markdown_strict/unnamed-chunk-1-1.png)
 
-An example of the use of `geom_dash` to plot gradient is as follow:
+An example of the use of `geom_dash` to plot gradients/fields is as
+follow:
 
     library(data.table)
     library(metR)  # devtools::install_github("eliocamp/metR")
@@ -37,7 +38,7 @@ An example of the use of `geom_dash` to plot gradient is as follow:
 ![](README_files/figure-markdown_strict/unnamed-chunk-2-1.png) ![Volcano
 slope field](./images/volcano_dash.png)
 
-The geom\_arc function allows rapic arc visualisation
+The geom\_arc function allows rapic arc visualisation:
 
     iris %>% ggplot(aes(Sepal.Length , Petal.Length, colour = Species)) +
       geom_arc(width = 0.8, aes(angle = Petal.Width ,radius = 0.1*Sepal.Width)) +
@@ -46,10 +47,12 @@ The geom\_arc function allows rapic arc visualisation
 ![](README_files/figure-markdown_strict/unnamed-chunk-3-1.png)
 
 Because these geoms do not use symbols, but explicit representation of
-geometric objects, they work better with fixed coordinates. This can be
-ensured by addig `+ coord_fixed()` to your ggplot call.
+geometric objects, they work better with fixed coordinates. Without
+fixed coordinates of the plot, the distortion between the axes is
+propagated to the geometric objects. This can be ensured by addig
+`+ coord_fixed()` to your ggplot call.
 
-Further work is need to ensure all objects fit the frame of the plot
-that is currently computed from the x,y of the aesthetic. For now this
-problem is fixed by increasin the visible area with the function
-`coord_cartesian()`.
+Further work is needed to ensure all objects fit the frame of the plot
+that is currently computed from the x,y of the aesthetic, and not the
+generated geometric objects. For now this problem is fixed by increasin
+the visible area with the function `coord_cartesian()`.
